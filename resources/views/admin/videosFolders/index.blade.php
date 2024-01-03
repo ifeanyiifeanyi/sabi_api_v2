@@ -69,19 +69,16 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <div class="">
+                                        <div class="btn-group">
                                                 <a title="Edit" href="{{ route("edit.videos", $video->id) }}"
                                                     class="btn btn-primary btn-sm">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <form id="delete" action="{{ route("destory.videos", $video->id) }}"
-                                                    method="POST" class="">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button title="Delete" type="submit"
-                                                        class="btn btn-danger btn-sm"><i
-                                                            class="fas fa-times"></i></button>
-                                                </form>
+                                                <a onclick="return confirm('Are you sure')" 
+                                                    href="{{ route("destroy.videos", $video->id) }}" 
+                                                    class="btn btn-danger btn-sm">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
                                         </div>
                                     </td>
                                 </tr>

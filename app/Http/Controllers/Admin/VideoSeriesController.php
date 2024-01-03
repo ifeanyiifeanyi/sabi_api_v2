@@ -61,4 +61,12 @@ class VideoSeriesController extends Controller
         return redirect()->route('video.series.view')->with('status'," Video Series deleted!");
 
     }
+    public function details($id){
+        $videoSeries = VideoSeries::findOrFail($id);
+        $seriesTitle = $videoSeries->title;
+        $videoDetails = $videoSeries->videos;
+        // dd($videoDetails);
+
+        return view("admin.videoSeries.show", compact("videoDetails", "seriesTitle"));
+    }
 }

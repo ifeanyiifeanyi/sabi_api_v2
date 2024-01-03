@@ -117,7 +117,7 @@
                                         <td>{{ Str::title($series->title) }}</td>
                                         <td>
                                             <div class="btn-group">
-                                                <a href="" class="btn btn-info">View</a>
+                                                <a href="{{ route('video.series.details', $series) }}" class="btn btn-info">View</a>
                                                 <a href="{{ route('video.series.edit', $series) }}" class="btn btn-primary">Edit</a>
                                                 <a onClick="return confirm('Are you sure ? ')" href="{{ route('video.series.delete', $series) }}" class="btn btn-danger">Delete</a>
                                             </div>

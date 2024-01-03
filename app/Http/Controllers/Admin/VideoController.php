@@ -21,14 +21,9 @@ class VideoController extends Controller
     public function index()
     {
         // $videos = Videos::latest()->simplePaginate(2);
-        $videos = DB::table('videos')
-            ->join('categories', 'videos.category_id', '=', 'categories.id')
-            ->join('genres', 'videos.genres_id', '=', 'genres.id')
-            ->join('ratings', 'videos.rating_id', '=', 'ratings.id')
-            ->join('parent_controls', 'videos.parent_control_id', '=', 'parent_controls.id')
-            ->select('videos.*', 'genres.name AS genName', 'categories.name AS catName', 'ratings.name AS rateName', 'parent_controls.name as PcName')
-            ->orderBy('id', 'desc')
-            ->simplePaginate(5);;
+        $videos = Videos::withTrashed()
+            ->whereNull('deleted_at')
+            ->paginate(10);
         return view('admin.videosFolders.index', compact('videos'));
     }
 
@@ -242,22 +237,20 @@ class VideoController extends Controller
 
     public function destroy($id)
     {
-        $video = Videos::findOrFail($id);
-        $videoFile = VideoFile::where('video_id', $video->id)->first();
+        $video = Videos::findOrFail($id)->delete();
+
+        // NOTE: this commented code is still very much useful, (softDelete implementation)
+        // $videoFile = VideoFile::where('video_id', $video->id)->first();
+        // $videoFile->delete();
+        // if (!empty($video->thumbnail) && file_exists(public_path($video->thumbnail))) {
+        //     unlink(public_path($video->thumbnail));
+        // }
+        // if (!empty($videoFile->file_path) && file_exists(public_path($videoFile->File_path))) {
+        //     unlink(public_path($videoFile->file_path));
+        // }
 
 
-        if (!empty($video->thumbnail) && file_exists(public_path($video->thumbnail))) {
-            unlink(public_path($video->thumbnail));
-        }
-        if (!empty($videoFile->file_path) && file_exists(public_path($videoFile->File_path))) {
-            unlink(public_path($videoFile->file_path));
-        }
 
-
-        if($video->delete()) {
-
-            $videoFile->delete();
-        }
         return redirect()->route("videos")->with("status", "Video and Associated Details Deleted!!");
     }
 

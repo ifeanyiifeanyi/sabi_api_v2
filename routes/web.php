@@ -133,7 +133,7 @@ Route::group(['middleware' => ['auth', 'isAdmin']], function(){
         Route::post('/videos/store', 'store')->name('store.videos') ;
         Route::get('/videos/show/{id}', 'show')->name('show.videos') ;
         Route::get('/videos/edit/{id}', 'edit')->name('edit.videos') ;
-        Route::delete('/videos/delete/{id}', 'destroy')->name('destory.videos') ;
+        Route::get('/videos/delete/{id}', 'destroy')->name('destroy.videos') ;
         Route::post('/videos/update/{id}', 'update')->name('update.videos') ;
         Route::get('/videos/draft/{id}', 'draft')->name('draft.videos') ;
         Route::get('/videos/activate/{id}', 'activate')->name('activate.videos') ;
@@ -145,6 +145,7 @@ Route::group(['middleware' => ['auth', 'isAdmin']], function(){
         Route::get('video-series/edit/{series}', 'edit')->name('video.series.edit');
         Route::patch('video-series/update/{series}', 'update')->name('video.series.update');
         Route::get('video-series/delete/{series}', 'destroy')->name('video.series.delete');
+        Route::get('video-series/details/{series}', 'details')->name('video.series.details');
     });
 
     Route::controller(BlogController::class)->group(function(){
@@ -167,7 +168,7 @@ Route::group(['middleware' => ['auth', 'isAdmin']], function(){
     // Route::class
 });
 
-// User payment managment  route
+// User payment management  route
 Route::controller(PaymentController::class)->group(function(){
     Route::get('/payments', 'index')->name('payments');
 });
