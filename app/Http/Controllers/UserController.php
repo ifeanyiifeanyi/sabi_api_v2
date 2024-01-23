@@ -17,39 +17,55 @@ class UserController extends Controller
     public function register(Request $request)
     {
 
+        $validator = Validator::make($request->all(),[
+            'username'  => ['required', 'string', 'unique:users'],
+            'name'      => ['required', 'string'],
+            'email'     => ['required', 'email', 'unique:users'],
+            'password'  => ['required', 'string', 'min:8'],
+        ]);
+
+        // Check for validation failure
+        if ($validator->fails()) {
+            return response()->json(['status' => false, 'message' => $validator->messages()], 422);
+        }
+
         $token = Str::random(64);
 
         $userId = rand(1111, 9999);
         // set user account to 0 none active account
         $status = '0';
 
-        $response = (new UserService($userId, $request->name, $request->username, $request->email, $request->password, $status))->register($request->devicename);
 
-        $userId = $response['user_id'];
+         // Create a new user
+        $user = User::create([
+            'userid'        => $userId,
+            'username'      => $request->username,
+            'name'          => $request->name,
+            'email'         => $request->email,
+            'password'      => Hash::make($request->password),
+            'token'         => $token,
+            'status'        => $status
+        ]);
 
-        // this token is for email verification
-        $token = Str::random(64);
+        // $response = (new UserService($userId, $request->name, $request->username, $request->email, $request->password, $status))->register($request->devicename);
 
-        $user = User::where('id', $userId)->first();
-        $user->token = $token;
-        $user->save();
 
 
         //if registration was successful send a email to verify account to activate it
-        if ($response) {
+        if ($user) {
+            // Send a confirmation email
             Mail::send('email.emailVerificationEmail', ['token' => $token], function ($message) use ($request) {
                 $message->to($request->email);
                 $message->subject("Email verification");
             });
         }
 
-        if (count($response) > 0) {
-            return response()->json($response);
-        } else {
-            return response()->json([
-                'error' => "registration failed",
-            ], 404);
-        }
+        return response()->json([
+            'status' => true,
+            'token' => $token,
+            'user' => $user,
+            'user_id' => $user->id,
+        ]);
     }
 
     public function verifyAccount($token)
@@ -163,6 +179,7 @@ class UserController extends Controller
     {
         $userId = $request->uId;
         $name = $request->name;
+        $email = $request->email;
         $username = $request->username;
 
         $user = User::find($userId);
@@ -172,8 +189,9 @@ class UserController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'username' => 'required|string|min:6|max:255|unique:users,username,' . $user->id,
+            'username' => 'required|string|min:6|max:255',
             'name' => 'required|string|min:6|max:255',
+            'email' => 'required|email'
         ]);
 
         if ($validator->fails()) {
@@ -186,6 +204,7 @@ class UserController extends Controller
         // Update user profile
         $user->name = $name;
         $user->username = $username;
+        $user->email = $email;
         $user->save();
 
         return response()->json([
@@ -195,6 +214,6 @@ class UserController extends Controller
         ]);
     }
 
-   
+
 
 }

@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\Admin\VideoSeriesController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\GenreController;
@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\CommentsController;
 use App\Http\Controllers\Payment\PaymentController;
 use App\Http\Controllers\Admin\ActivePlanController;
 use App\Http\Controllers\Admin\VideoRatingController;
+use App\Http\Controllers\Admin\VideoSeriesController;
 use App\Http\Controllers\Admin\PaymentPlansController;
 use App\Http\Controllers\Admin\ParentControlController;
 
@@ -29,6 +30,18 @@ use App\Http\Controllers\Admin\ParentControlController;
 
 Route::get('/', function () {
     return view('auth.login');
+});
+
+Route::controller(UserController::class)->group(function () {
+
+    Route::get('account/verify/{token}', 'verifyAccount')->name('user.verify');
+    Route::get('confirm/verify', 'confirmVerify')->name('confirm.verify');
+
+    // update user password
+    Route::post('update-password', 'updatePassword');
+    // forgot password
+    Route::post('forgot-password', 'forgotPassword');
+    Route::post('updateProfile', 'updateProfile');
 });
 
 
@@ -146,6 +159,7 @@ Route::group(['middleware' => ['auth', 'isAdmin']], function(){
         Route::patch('video-series/update/{series}', 'update')->name('video.series.update');
         Route::get('video-series/delete/{series}', 'destroy')->name('video.series.delete');
         Route::get('video-series/details/{series}', 'details')->name('video.series.details');
+        Route::get('video-series/show/{series}', 'show')->name('video.series.show');
     });
 
     Route::controller(BlogController::class)->group(function(){

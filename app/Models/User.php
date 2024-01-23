@@ -38,7 +38,8 @@ class User extends Authenticatable
         'subcribe_date',
         'password',
         'created_at',
-        'email_verified_at'
+        'email_verified_at',
+        'token'
     ];
 
     /**

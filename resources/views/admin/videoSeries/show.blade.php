@@ -34,6 +34,7 @@
                                             <th>s/n</th>
                                             <th>Title</th>
                                             <th>Status</th>
+                                            <th>Series title</th>
                                             <th>Action</th>
                                         </tr>
 
@@ -41,22 +42,18 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ Str::title($series->title) }}</td>
+                                            <td>{{ Str::title($series->title) }}</td>
                                             <td>{{ $series->status ? "Active" : "Draft" }}</td>
                                             <td>
                                                 <div class="btn-group">
-                                                    <a href="" class="btn btn-info">Details</a>
-                                                   
+                                                    <a href="{{ route('video.series.show', $series) }}" class="btn btn-info">Details</a>
                                                 </div>
                                             </td>
                                         </tr>
 
                                         @endforeach
                                     </table>
-
-
-
                                 @else
-
                                 <p class="alert alert-info">No Video Series Available</p>
                                 @endif
                             </div>
